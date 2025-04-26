@@ -5,7 +5,7 @@ def init_db():
     conn = sqlite3.connect("sensor_data.db")
     cursor = conn.cursor()
     cursor.execute('''CREATE TABLE IF NOT EXISTS sensors(
-                    id INTEGER KEY AUTOINCREMENT,
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
                     timestamp TEXT,
                     temperature REAL,
                     vibration REAL,
