@@ -3,6 +3,7 @@ from dash import dcc, html, dash_table
 import pandas as pd
 import requests
 import plotly.express as px
+from dash.dependencies import Output, Input
 
 app = dash.Dash(__name__)
 
@@ -13,10 +14,12 @@ def fetch_data():
 
 app.layout = html.Div([
     html.H1("Digital Twin - Industrial Monitoring", style={"textAlign": "center"}),
+
     dash_table.DataTable(
         id="sensor-table",
-        columns=[{"name": i, "id": i} for i in ["timestamp","temperature", "vibration","pressure"]],
-        style_table={"overflowX":"auto"}
+        columns=[{"name": i, "id": i} for i in ["timestamp", "temperature", "vibration", "pressure"]],
+        style_table={"overflowX": "auto"},
+        style_cell={"textAlign": "center"},
     ),
 
     dcc.Graph(id="sensor-graph"),
@@ -25,17 +28,23 @@ app.layout = html.Div([
 ])
 
 @app.callback(
-    [dash.dependencies.Output("sensor-table", "data"),
-     dash.dependencies.Output("sensor-graph", "figure")],
-     [dash.dependencies.Input("interval-component", interval=2000, n_intervals=0)]
+    [Output("sensor-table", "data"),
+     Output("sensor-graph", "figure")],
+    [Input("interval-component", "n_intervals")]
 )
-
-def update_dashborad(n):
-    """Updates dashboard with the latest ensor data."""
+def update_dashboard(n):
+    """Updates dashboard with the latest sensor data."""
     df = fetch_data()
 
-    fig = px.line(df, x="timestamp", y=["temperature", "vibration","pressure"],
-                                        title="Sensor Readings over Time")
+    if df.empty:
+        return [], {}
+
+    fig = px.line(df, x="timestamp", y=["temperature", "vibration", "pressure"],
+                  title="Sensor Readings Over Time",
+                  markers=True)
+
+    fig.update_layout(xaxis_title="Timestamp", yaxis_title="Sensor Values")
+
     return df.to_dict("records"), fig
 
 if __name__ == "__main__":
