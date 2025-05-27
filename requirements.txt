@@ -1,8 +1,11 @@
-flask
 dash
-pandas
+Flask
+joblib
+matplotlib
 numpy
-scikit-learn
-xgboost
+pandas
 plotly
-gunicorn
+Requests
+scikit_learn
+seaborn
+xgboost

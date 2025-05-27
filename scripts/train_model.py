@@ -14,7 +14,7 @@ def load_sensor_data():
     """Fetches sensor data from SQLite and returns a DataFrame."""
     db_path = os.path.join(BASE_DIR, "sensor_data.db")
     conn = sqlite3.connect(db_path)
-    df = pd.read_sql_query("SELECT * FROM sensors", conn)  # <-- FIXED
+    df = pd.read_sql_query("SELECT * FROM sensors", conn)
     conn.close()
     return df
 
@@ -36,7 +36,7 @@ def train_ai_model(df):
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-    rf_model = RandomForestClassifier(n_estimators=100, random_state=42)  # <-- Typo fixed: "n_estimators"
+    rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
     rf_model.fit(X_train, y_train)
 
     xgb_model = xgb.XGBClassifier(use_label_encoder=False, eval_metric='logloss')
@@ -49,7 +49,7 @@ def train_ai_model(df):
     joblib.dump(rf_model, os.path.join(model_dir, "fault_detection_rf.pkl"))
     joblib.dump(xgb_model, os.path.join(model_dir, "fault_detection_xgb.pkl"))
 
-    print("✅ AI models trained and saved successfully!")
+    print("AI models trained and saved successfully!")
 
 if __name__ == "__main__":
     df = load_sensor_data()

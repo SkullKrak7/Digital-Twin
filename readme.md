@@ -1,37 +1,36 @@
 # Digital Twin: Real-Time Industrial Monitoring System
 
-> **Simulated IoT Sensors • AI Fault Detection • Live Dashboard • Cloud Deployment**
+**Simulated IoT Sensors | AI Fault Detection | Live Dashboard | Cloud Deployment**
 
----
+## Overview
 
-## 🔧 Project Overview
+This project implements a Digital Twin system that simulates industrial machinery using synthetic IoT sensor data. It monitors parameters such as temperature, vibration, and pressure to detect faults in real time using trained AI models. The system includes:
 
-This project implements a **Digital Twin** system that simulates industrial machinery using synthetic IoT sensor data. It monitors parameters like **temperature**, **vibration**, and **pressure** to detect faults in real-time using trained AI models. The system features:
+* Simulated sensor data generation
+* Local SQLite database for storage
+* Fault detection using Random Forest and XGBoost
+* Interactive real-time dashboard using Dash and Plotly
+* REST API using Flask
+* Docker containerization
+* Cloud-ready architecture (Heroku compatible)
 
-- Simulated real-world sensor data generation
-- Local SQLite database for data storage
-- AI-based fault detection using **Random Forest** and **XGBoost**
-- Interactive real-time dashboard with **Dash + Plotly**
-- RESTful API using **Flask**
-- Cloud deployment-ready (Heroku-compatible)
-
----
-
-## 🧱 Project Structure
+## Project Structure
 
 ```
 digital_twin_project/
-├── app/               # Flask API and Dash dashboard
+├── app/               
+│   ├── __init__.py
 │   ├── api.py
 │   └── dashboard.py
 │
-├── data/              # Simulated sensor CSVs
+├── data/              
 │   └── sensor_data.csv
 │
-├── models/            # Trained AI models
+├── models/            
 │   └── fault_detection_rf.pkl
 │
-├── scripts/           # Sensor generation, database setup, model training
+├── scripts/           
+│   ├── __init__.py
 │   ├── data_gen.py
 │   ├── init_db.py
 │   ├── store_data.py
@@ -39,62 +38,56 @@ digital_twin_project/
 │   ├── train_model.py
 │   └── evaluate_model.py
 │
-├── requirements.txt   # Python dependencies
-├── .gitignore
+├── main.py            
+├── requirements.txt   
+├── Dockerfile         
+├── .gitignore         
 └── README.md
 ```
 
----
+## Key Technologies
 
-## 🔌 Key Technologies
+* Python 3.13 (Docker: `python:3.13-slim-bookworm`)
+* Flask and Dash (API and dashboard)
+* pandas and numpy (data processing)
+* sqlite3 (database)
+* scikit-learn and xgboost (model training)
+* plotly (visualization)
+* joblib (model persistence)
 
-- **Python 3.8+**
-- **Flask** + **Dash** (Backend & Dashboard)
-- **pandas**, **numpy** (Data handling)
-- **sqlite3** (Database)
-- **scikit-learn**, **xgboost** (AI Models)
-- **plotly** (Interactive graphing)
-- **joblib** (Model serialization)
-
----
-
-## 🚀 How It Works
+## How It Works
 
 ### 1. Simulate Sensor Data
 
-`data_gen.py` generates synthetic industrial sensor readings and stores them in a CSV file.
+`data_gen.py` generates synthetic temperature, vibration, and pressure readings into a CSV.
 
 ### 2. Store Data in SQLite
 
-`init_db.py` initializes the database, and `store_data.py` inserts the generated readings into `sensor_data.db`.
+* `init_db.py` initializes the database schema.
+* `store_data.py` inserts CSV data into `sensor_data.db`.
 
 ### 3. Train AI Models
 
-- Loads sensor data from the database
-- Labels records as faulty if:
-  - Temperature > 80°C
-  - Vibration > 4.0 m/s²
-  - Pressure > 90 bar
-- Trains two models: **RandomForestClassifier** and **XGBoost**
-- Saves trained models under `models/`
+`train_model.py` trains RandomForest and XGBoost models based on fault rules, and saves them in the `models/` directory.
 
-### 4. API Backend (Flask)
+### 4. API Endpoint
 
-- `/data`: Returns the last 10 sensor readings as JSON
+`api.py` serves the 10 latest entries from the database at `/data`.
 
-### 5. Real-Time Dashboard (Dash)
+### 5. Real-Time Dashboard
 
-- Auto-refreshes every 2 seconds
-- Displays live sensor values and trend graphs
+`dashboard.py` polls the API every 2 seconds and renders a live chart and table.
 
----
+### 6. CLI Launcher
 
-## 🖥️ Local Setup
+`main.py` provides a menu with 6 options to run each component in sequence or together.
 
-### 1. Create & Activate a Virtual Environment
+## Local Setup
+
+### 1. Create and Activate Environment
 
 ```bash
-conda create --name digital-twin-env python=3.8
+conda create --name digital-twin-env python=3.13
 conda activate digital-twin-env
 ```
 
@@ -104,49 +97,45 @@ conda activate digital-twin-env
 pip install -r requirements.txt
 ```
 
-### 3. Run the Pipeline
+### 3. Use the CLI
 
 ```bash
-# Generate sensor data
-python scripts/data_gen.py
-
-# Initialize the database
-python scripts/init_db.py
-
-# Store sensor data into the database
-python scripts/store_data.py
-
-# Train AI models
-python scripts/train_model.py
-
-# Evaluate models (optional)
-python scripts/evaluate_model.py
+python main.py
 ```
 
-### 4. Launch the API
+Select from options 1–6 to:
+
+* Generate data
+* Initialize DB
+* Train models
+* Launch dashboard and API together
+
+## Docker Deployment
+
+### 1. Build the Image
 
 ```bash
-python app/api.py
+docker build -t digital-twin .
 ```
 
-Visit: [http://localhost:5000/data](http://localhost:5000/data)
-
-### 5. Launch the Dashboard
+### 2. Run the Container
 
 ```bash
-python app/dashboard.py
+docker run -it --rm -p 5000:5000 -p 8050:8050 digital-twin
 ```
 
-Visit: [http://localhost:8050](http://localhost:8050)
+### 3. Access Services
 
----
+* API: [http://localhost:5000/data](http://localhost:5000/data)
+* Dashboard: [http://localhost:8050](http://localhost:8050)
 
-## ☁️ Cloud Deployment (Heroku)
+## (Optional) Heroku Deployment
 
 ### 1. Prepare Files
 
-- `requirements.txt`
-- `Procfile`:
+Ensure `requirements.txt` and `Procfile` exist:
+
+**Procfile:**
 
 ```
 web: gunicorn app.api:app
@@ -161,14 +150,11 @@ heroku git:remote -a digital-twin-monitoring
 git push heroku main
 ```
 
-### 3. Live API URL
+### 3. Access API
 
-Visit:  
-`https://digital-twin-monitoring.herokuapp.com/data`
+[https://digital-twin-monitoring.herokuapp.com/data](https://digital-twin-monitoring.herokuapp.com/data)
 
----
-
-## 📊 Sample Output
+## Sample API Output
 
 ```json
 [
@@ -177,14 +163,11 @@ Visit:
     "temperature": 78.2,
     "vibration": 3.2,
     "pressure": 60.5
-  },
-  ...
+  }
 ]
 ```
 
----
-
-## 🧐 Fault Prediction Logic
+## Fault Prediction Logic
 
 ```python
 fault = (
@@ -194,32 +177,17 @@ fault = (
 )
 ```
 
----
+## Future Improvements
 
-## 💎 Notes
+* Replace CSV step with real-time stream → DB
+* Add Docker health checks and logs
+* Use PostgreSQL for concurrency support
+* Deploy full dashboard with domain and HTTPS
 
-- Sensor simulation uses `np.random.uniform()` to mimic real-world randomness
-- Dashboard refreshes every 2 seconds automatically
-- Models saved in `/models/` using `joblib`
+## Author
 
----
+Built by Sai Karthik Kagolanu as a practical industrial simulation and monitoring project.
 
-## 🚀 Future Improvements
+## License
 
-- [ ] Replace CSV pipeline with direct DB updates
-- [ ] Add Docker containerization
-- [ ] Migrate from SQLite to PostgreSQL
-- [ ] Deploy full dashboard to cloud
-
----
-
-## 👨‍💻 Author
-
-Built by **Sai Karthik Kagolanu** as part of a real-world industrial simulation project.
-
----
-
-## 📜 License
-
-This project is licensed under the **MIT License**.
-
+Licensed under the MIT License. See LICENSE file for details.

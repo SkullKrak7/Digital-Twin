@@ -16,8 +16,8 @@ def evaluate_model(model_path, X_test, y_test):
     accuracy = accuracy_score(y_test, predictions)
     report = classification_report(y_test, predictions)
 
-    print(f"\n🔹 Model: {os.path.basename(model_path)}")
-    print(f"✅ Accuracy: {accuracy:.2f}")
+    print(f"\n Model: {os.path.basename(model_path)}")
+    print(f"Accuracy: {accuracy:.2f}")
     print(report)
 
     # Plot confusion matrix
@@ -29,24 +29,23 @@ def evaluate_model(model_path, X_test, y_test):
     plt.ylabel('Actual')
     plt.show()
 
-if __name__ == "__main__":
-    # Load raw sensor data
+def main():
     csv_path = os.path.join(BASE_DIR, "data", "sensor_data.csv")
     df = pd.read_csv(csv_path)
-
-    # Generate fault labels
     df['fault'] = (df['temperature'] > 80) | (df['vibration'] > 4.0) | (df['pressure'] > 90)
     df['fault'] = df['fault'].astype(int)
 
-    # Feature/Target split
     X = df[['temperature', 'vibration', 'pressure']]
     y = df['fault']
 
-    # Train-test split
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-    # Evaluate both models
     model_rf_path = os.path.join(BASE_DIR, "models", "fault_detection_rf.pkl")
     model_xgb_path = os.path.join(BASE_DIR, "models", "fault_detection_xgb.pkl")
+
     evaluate_model(model_rf_path, X_test, y_test)
     evaluate_model(model_xgb_path, X_test, y_test)
+
+
+if __name__ == "__main__":
+    main()
