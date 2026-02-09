@@ -1,18 +1,20 @@
-# Digital Twin: Real-Time Industrial Monitoring System
+# Digital Twin: Industrial Monitoring Dashboard
 
-**Simulated IoT Sensors | AI Fault Detection | Live Dashboard | Cloud Deployment**
+**Simulated IoT Sensors | AI Fault Detection | Interactive Dashboard | Cloud Deployment**
 
 ## Overview
 
-This project implements a Digital Twin system that simulates industrial machinery using synthetic IoT sensor data. It monitors parameters such as temperature, vibration, and pressure to detect faults in real time using trained AI models. The system includes:
+This project implements a Digital Twin monitoring system that simulates industrial machinery using synthetic IoT sensor data. It monitors parameters such as temperature, vibration, and pressure to detect faults using trained AI models. The system includes:
 
 * Simulated sensor data generation
 * Local SQLite database for storage
 * Fault detection using Random Forest and XGBoost
-* Interactive real-time dashboard using Dash and Plotly
+* Interactive dashboard using Dash and Plotly (updates on page refresh)
 * REST API using Flask
 * Docker containerization
 * Cloud-ready architecture (Heroku compatible)
+
+**Note:** Dashboard updates on page refresh, not live streaming.
 
 ## Project Structure
 
