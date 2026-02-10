@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  init:
+    image: python:3.13-slim-bookworm
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: >
+      sh -c "
+        pip install -q pandas &&
+        python scripts/data_gen.py &&
+        python scripts/init_db.py &&
+        python scripts/store_data.py
+      "
+    
+  api:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+    command: python app/api.py
+    depends_on:
+      init:
+        condition: service_completed_successfully
+    
+  dashboard:
+    build: .
+    ports:
+      - "8050:8050"
+    volumes:
+      - .:/app
+    command: python app/dashboard.py
+    depends_on:
+      - api

@@ -10,4 +10,4 @@ RUN pip install --no-cache-dir --upgrade pip && \
 EXPOSE 5000
 EXPOSE 8050
 
-CMD ["python", "main.py"]
+CMD ["python", "app/dashboard.py"]
